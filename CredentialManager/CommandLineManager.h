@@ -31,7 +31,8 @@ public:
 
         result.m_showHelp = (argc == 1);
 
-        for (int i = 1; i < argc; i++)
+        // Skip the first argument because by convention, argv[0] is the command with which the program is invoked.
+        for (size_t i = 1; i < argc; i++)
         {
             PCWSTR arg = argv[i];
             size_t length = wcslen(arg);
