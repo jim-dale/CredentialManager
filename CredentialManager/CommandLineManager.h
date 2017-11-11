@@ -22,7 +22,7 @@ public:
     {
     }
 
-    AppContext ParseCommandLine(int argc, PWSTR argv[])
+    AppContext ParseCommandLine(size_t argc, wchar_t const* const* argv)
     {
         AppContext result{};
 
@@ -42,9 +42,6 @@ public:
                 if (length > 1 && (arg[0] == '-' || arg[0] == '/'))
                 {
                     state = ProcessOption(result, &arg[1]);
-                }
-                else
-                {
                 }
                 break;
             case ParserState::ExpectGetName:
@@ -143,6 +140,10 @@ private:
         else if (_wcsicmp(L"c", arg) == 0)
         {
             appContext.m_showConfiguration = true;
+        }
+        else if (_wcsicmp(L"g", arg) == 0)
+        {
+            result = ParserState::ExpectGetName;
         }
         else if (_wcsicmp(L"l", arg) == 0)
         {
