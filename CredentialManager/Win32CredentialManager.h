@@ -56,6 +56,11 @@ public:
         return result;
     }
 
+    CredentialCollection GetAllEntries()
+    {
+        return GetEntries(Constants::DefaultFilter);
+    }
+
     SimpleGenericCredential GetEntry(const std::wstring& name)
     {
         SimpleGenericCredential result{};

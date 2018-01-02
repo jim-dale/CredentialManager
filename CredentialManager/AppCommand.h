@@ -13,12 +13,22 @@ struct AppCommand
         result.m_commandType = AppCommandType::ListEntries;
         if (filter.empty())
         {
-            result.m_name = L"*";
+            result.m_name = Constants::DefaultFilter;
         }
         else
         {
             result.m_name = filter;
         }
+        return result;
+    }
+
+    static AppCommand CreateRegexListCommand(const std::wstring& filter)
+    {
+        AppCommand result{};
+
+        result.m_commandType = AppCommandType::RegexListEntries;
+        result.m_name = filter;
+
         return result;
     }
 
@@ -45,4 +55,3 @@ struct AppCommand
 };
 
 typedef std::vector<AppCommand> AppCommands;
-

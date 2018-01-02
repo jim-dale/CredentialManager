@@ -13,9 +13,11 @@
 
 #include <algorithm>
 #include <memory>
+#include <regex>
 #include <string>
 #include <vector>
 
+#include "Constants.h"
 #include "AppCommandType.h"
 #include "Utility.h"
 #include "AppMetadata.h"

@@ -75,9 +75,46 @@ public:
         std::wstring filter = Win32CredentialManager::BuildFullTargetName(m_prefix, command.m_name);
 
         auto items = m_credentialManager.GetEntries(filter);
+        std::sort(items.begin(), items.end(), SimpleGenericCredential::CompareByName);
+
         for each (auto item in items)
         {
-            fwprintf(m_outputFile, L"%s\t%s\n", item.m_name.c_str(), item.m_password.c_str());
+            fwprintf(m_outputFile, L"\"%s\",\"%s\"\n", item.m_name.c_str(), item.m_password.c_str());
         }
+    }
+
+    void RegexListEntries(const AppCommand& command)
+    {
+        std::wstring regexExpression(L"^");
+        regexExpression.append(m_prefix);
+        regexExpression.append(command.m_name);
+
+        auto items = GetRegexEntries(regexExpression);
+        std::sort(items.begin(), items.end(), SimpleGenericCredential::CompareByName);
+
+        for each (auto item in items)
+        {
+            fwprintf(m_outputFile, L"\"%s\",\"%s\"\n", item.m_name.c_str(), item.m_password.c_str());
+        }
+    }
+
+private:
+    CredentialCollection GetRegexEntries(const std::wstring& regexExpression)
+    {
+        CredentialCollection result;
+
+        auto regex = std::wregex(regexExpression);
+
+        auto items = m_credentialManager.GetAllEntries();
+        for each (auto item in items)
+        {
+            std::wstring toMatch(item.m_name);
+
+            if (std::regex_match(toMatch, regex))
+            {
+                result.push_back(item);
+            }
+        }
+        return result;
     }
 };

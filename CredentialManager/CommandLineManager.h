@@ -6,12 +6,13 @@ private:
     enum class ParserState
     {
         ExpectOption
-        ,ExpectGetName
-        ,ExpectAddEntryName
-        ,ExpectAddEntryPassword
-        ,ExpectListEntriesFilter
-        ,ExpectPrefix
-        ,ExpectOutputFileName
+        , ExpectGetName
+        , ExpectAddEntryName
+        , ExpectAddEntryPassword
+        , ExpectListEntriesFilter
+        , ExpectRegexListEntriesFilter
+        , ExpectPrefix
+        , ExpectOutputFileName
     };
 
 public:
@@ -61,6 +62,10 @@ public:
                 result.m_commands.push_back(AppCommand::CreateListCommand(arg));
                 state = ParserState::ExpectOption;
                 break;
+            case ParserState::ExpectRegexListEntriesFilter:
+                result.m_commands.push_back(AppCommand::CreateRegexListCommand(arg));
+                state = ParserState::ExpectOption;
+                break;
             case ParserState::ExpectPrefix:
                 result.m_prefix = arg;
                 state = ParserState::ExpectOption;
@@ -73,6 +78,19 @@ public:
                 break;
             }
         }
+        if (state == ParserState::ExpectListEntriesFilter)
+        {   // orphaned list option with no filter parameter specified. Default to '*' == match all entries.
+            result.m_commands.push_back(AppCommand::CreateListCommand(Constants::DefaultFilter));
+            state = ParserState::ExpectOption;
+        }
+        if (state != ParserState::ExpectOption)
+        {
+            if (state == ParserState::ExpectRegexListEntriesFilter)
+            {
+                result.m_showHelp = true;
+                result.m_errorMessage = std::wstring(L"The regular expression must be specified for the -r parameter.");
+            }
+        }
         return result;
     }
 
@@ -82,15 +100,17 @@ public:
 
         wprintf(L"Manages credentials in the Windows Credential Manager store.\n\n");
 
-        wprintf(L"Usage: %s [-?] [-v] [-c] [-l filter] [-p prefix] [-o filename] [-s name password] [-g Name]\n\n", ProgramName);
+        wprintf(L"Usage: %s [-?] [-v] [-c] [-l filter] [-r regex] [-p prefix] [-o filename] [-s name password] [-g Name]\n\n", ProgramName);
 
         wprintf(L"  -?  Display this help information.\n");
         wprintf(L"  -v  Display version information.\n");
         wprintf(L"  -c  Display the runtime configuration.\n");
         wprintf(L"  -l  List entries with the specified filter. The filter is appended to the prefix to match entries.\n");
+        wprintf(L"      The default filter is '*' to list all entries.\n");
+        wprintf(L"  -r  List entries with the specified regular expression filter. The filter is appended to the prefix to match entries.\n");
         wprintf(L"  -o  Set output filename.\n");
         wprintf(L"  -p  Sets the prefix for the credential. The prefix is combined with the name to produce a unique name.\n");
-        wprintf(L"      The prefix can also be set in the 'CM_NAME_PREFIX' environment variable.\n");
+        wprintf(L"      The prefix defaults to the value in the 'CM_NAME_PREFIX' environment variable if this has been set.\n");
         wprintf(L"  -g  Display the password for the named generic credential.\n");
         wprintf(L"  -s  Sets the password for the given credential name. Overwrites the existing password if the name already exists.\n\n");
     }
@@ -149,6 +169,10 @@ private:
         else if (_wcsicmp(L"l", arg) == 0)
         {
             result = ParserState::ExpectListEntriesFilter;
+        }
+        else if (_wcsicmp(L"r", arg) == 0)
+        {
+            result = ParserState::ExpectRegexListEntriesFilter;
         }
         else if (_wcsicmp(L"o", arg) == 0)
         {
