@@ -14,7 +14,7 @@ The example below creates a backup of the current user's profile directory in an
 @SET ZIP="7za.exe"
 @SET ZIPOPTS=-tzip -mem=AES256 -p"%PASSWORD%"
 
-@%ZIP% a %ZIPOPTS% "%TIMESTAMP%-%USERNAME%.enc.zip" "%USERPROFILE%\*.*"
+@%ZIP% a %ZIPOPTS% "%TIMESTAMP%-%USERNAME%.enc.zip" "%USERPROFILE%\*"
 
 @ENDLOCAL
 ```
