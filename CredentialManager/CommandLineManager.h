@@ -116,7 +116,21 @@ public:
 
     void ShowVersion()
     {
-        wprintf(L"%s %s-%s-%s\n\n", ProgramName, ProgramVersion, ProgramPlatform, ProgramConfig);
+        std::wstring notSet(Check_SourceVersion);
+
+        std::wstring gitHash(GitHash);
+        if (gitHash.compare(notSet) != 0 && gitHash.length() > notSet.length())
+        {
+            gitHash = gitHash.substr(0, gitHash.length() - notSet.length());
+        }
+
+        std::wstring shortGitHash(gitHash);
+        if (shortGitHash.length() > SHORTGITHASHLEN)
+        {
+            shortGitHash = shortGitHash.substr(shortGitHash.length() - SHORTGITHASHLEN);
+        }
+
+        wprintf(L"%s %s-%s-%s-%s (%s)\n\n", ProgramName, ProgramVersion, shortGitHash.c_str(), ProgramPlatform, ProgramConfig, gitHash.c_str());
     }
 
     void ShowIfError(const AppContext& ctx)
