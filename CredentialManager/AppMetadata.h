@@ -5,10 +5,10 @@
 
 #define SHORTGITHASHLEN 8
 #define CHECK_SOURCEVERSION NOTSET
+static const wchar_t* Check_SourceVersion = _T(STRINGIFY(-CHECK_SOURCEVERSION - ));
 
 static const wchar_t* ProgramName = _T("CredentialManager");
 static const wchar_t* ProgramVersion = _T("2.2.0");
-static const wchar_t* Check_SourceVersion = _T(STRINGIFY(-CHECK_SOURCEVERSION-));
 static const wchar_t* GitHash = _T(STRINGIFY(BUILD_SOURCEVERSION-CHECK_SOURCEVERSION-));
 
 #if defined(_DEBUG)

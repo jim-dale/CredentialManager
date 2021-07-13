@@ -1,9 +1,6 @@
 # CredentialManager
 Command line utility to manage credentials in the Windows Credential Manager store
 
-## Building the code
-To build the code you must define the `BUILD_BUILDNUMBER` environment variable otherwise the build will fail.
-
 ## Usage
 ```dosbatch
 CredentialManager [-?] [-v] [-c] [-l filter] [-r regex] [-p prefix] [-o filename] [-s name password] [-g Name]

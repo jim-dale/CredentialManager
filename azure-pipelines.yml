@@ -35,16 +35,26 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: ArchiveFiles@2
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)\ToPublish'
   inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)\bin\$(buildConfiguration)\$(buildPlatform)\*.exe'
-    includeRootFolder: true
+    contents: |
+      LICENSE
+      README.md
+      bin\$(buildConfiguration)\$(buildPlatform)\*.exe
+    targetFolder: '$(Build.ArtifactStagingDirectory)\ToPublish'
+
+- task: ArchiveFiles@2
+  displayName: 'Creating archive: $(Build.ArtifactStagingDirectory)\$(Build.BuildNumber)-$(buildConfiguration)-$(buildPlatform).zip'
+  inputs:
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)\ToPublish'
+    includeRootFolder: false
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-$(buildConfiguration)-$(buildPlatform).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)\$(Build.BuildNumber)-$(buildConfiguration)-$(buildPlatform).zip'
     replaceExistingArchive: true
 
-- task: PublishBuildArtifacts@1
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Artifact: drop'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+    targetPath: '$(Build.ArtifactStagingDirectory)\$(Build.BuildNumber)-$(buildConfiguration)-$(buildPlatform).zip'
+    artifactType: pipeline
