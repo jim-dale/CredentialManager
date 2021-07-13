@@ -38,10 +38,10 @@ steps:
 
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Build.SourcesDirectory)\bin\$(buildPlatform)\$(buildConfiguration)\*.exe'
+    rootFolderOrFile: '$(Build.SourcesDirectory)\bin\$(buildConfiguration)\$(buildPlatform)\*.exe'
     includeRootFolder: true
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-$(buildPlatform)-$(buildConfiguration).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildNumber)-$(buildConfiguration)-$(buildPlatform).zip'
     replaceExistingArchive: true
 
 - task: PublishBuildArtifacts@1
