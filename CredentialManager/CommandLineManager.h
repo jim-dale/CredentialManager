@@ -136,7 +136,7 @@ public:
         wprintf(L"Prefix: \"%s\"\n", ctx.m_prefix.c_str());
         wprintf(L"OutputFileName: \"%s\"\n", ctx.m_outputFileName.c_str());
         wprintf(L"Commands:\n");
-        for each (AppCommand command in ctx.m_commands)
+        for (auto command : ctx.m_commands)
         {
             wprintf(L"    CommandType: \"%s\"\n", Utility::to_wstr(command.m_commandType));
             wprintf(L"    Name: \"%s\"\n", command.m_name.c_str());

@@ -49,7 +49,7 @@ public:
 
     static wchar_t const*const to_wstr(AppCommandType commandType)
     {
-        wchar_t* result = L"";
+        const wchar_t* result = L"";
 
         switch (commandType)
         {

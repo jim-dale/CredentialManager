@@ -5,20 +5,20 @@
 
 #define VERSION(x) "2.2.0-" STRINGIFY(x)
 
-static const PTCHAR ProgramName = _T("CredentialManager");
-static const PTCHAR ProgramVersion = _T(VERSION(BUILDNUM));
+static const wchar_t* ProgramName = _T("CredentialManager");
+static const wchar_t* ProgramVersion = _T(VERSION(BUILDNUM));
 
 #if defined(_DEBUG)
-static const PTCHAR ProgramConfig = _T("Debug");
+static const wchar_t* ProgramConfig = _T("Debug");
 #elif defined(NDEBUG)
-static const PTCHAR ProgramConfig = _T("Release");
+static const wchar_t* ProgramConfig = _T("Release");
 #else
-static const PTCHAR ProgramConfig = _T("Undefined");
+static const wchar_t* ProgramConfig = _T("Undefined");
 #endif
 #if defined(_M_IX86)
-static const PTCHAR ProgramPlatform = _T("X86");
+static const wchar_t* ProgramPlatform = _T("X86");
 #elif defined(_M_X64)
-static const PTCHAR ProgramPlatform = _T("X64");
+static const wchar_t* ProgramPlatform = _T("X64");
 #else
-static const PTCHAR ProgramPlatform = _T("Undefined");
+static const wchar_t* ProgramPlatform = _T("Undefined");
 #endif

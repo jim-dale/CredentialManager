@@ -77,7 +77,7 @@ public:
         auto items = m_credentialManager.GetEntries(filter);
         std::sort(items.begin(), items.end(), SimpleGenericCredential::CompareByName);
 
-        for each (auto item in items)
+        for (auto item : items)
         {
             fwprintf(m_outputFile, L"\"%s\",\"%s\"\n", item.m_name.c_str(), item.m_password.c_str());
         }
@@ -92,7 +92,7 @@ public:
         auto items = GetRegexEntries(regexExpression);
         std::sort(items.begin(), items.end(), SimpleGenericCredential::CompareByName);
 
-        for each (auto item in items)
+        for (auto item : items)
         {
             fwprintf(m_outputFile, L"\"%s\",\"%s\"\n", item.m_name.c_str(), item.m_password.c_str());
         }
@@ -106,7 +106,7 @@ private:
         auto regex = std::wregex(regexExpression);
 
         auto items = m_credentialManager.GetAllEntries();
-        for each (auto item in items)
+        for (auto item : items)
         {
             std::wstring toMatch(item.m_name);
 
