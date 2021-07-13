@@ -6,7 +6,7 @@
 name: $(TeamProject)_$(Build.DefinitionName)_$(Build.SourceVersion)
 
 trigger:
-- master
+- main
 
 strategy:
   matrix:
