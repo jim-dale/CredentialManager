@@ -20,14 +20,7 @@ public:
                 result.assign(buffer);
             }
         }
-        else
-        {
-            DWORD length = GetEnvironmentVariable(L"CM_NAME_PREFIX", buffer, BufferSize);
-            if (length > 0 && length < BufferSize)
-            {
-                result.assign(buffer);
-            }
-        }
+
         if (false == result.empty() && false == ends_with(result, separator))
         {
             result.append(separator);

@@ -29,9 +29,9 @@ public:
         {
             FILE* fd = nullptr;
             errno_t err = _wfopen_s(&fd, m_outputFileName.c_str(), L"w");
-            if (0 == err)
+            if (0 == err && fd != nullptr)
             {
-                _setmode(_fileno(fd), _O_U8TEXT);
+                (void)_setmode(_fileno(fd), _O_U8TEXT);
                 m_outputFile = fd;
             }
         }
