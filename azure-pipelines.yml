@@ -42,6 +42,7 @@ steps:
       LICENSE
       README.md
       bin\$(buildConfiguration)\$(buildPlatform)\*.exe
+    flattenFolders: true
     targetFolder: '$(Build.ArtifactStagingDirectory)\ToPublish'
 
 - task: ArchiveFiles@2
@@ -58,3 +59,4 @@ steps:
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)\$(Build.BuildNumber)-$(buildConfiguration)-$(buildPlatform).zip'
     artifactType: pipeline
+    artifactName: 'drop'
