@@ -110,7 +110,6 @@ public:
         wprintf(L"  -r  List entries with the specified regular expression filter. The filter is appended to the prefix to match entries.\n");
         wprintf(L"  -o  Set output filename.\n");
         wprintf(L"  -p  Sets the prefix for the credential. The prefix is combined with the name to produce a unique name.\n");
-        wprintf(L"      The prefix defaults to the value in the 'CM_NAME_PREFIX' environment variable if this has been set.\n");
         wprintf(L"  -g  Display the password for the named generic credential.\n");
         wprintf(L"  -s  Sets the password for the given credential name. Overwrites the existing password if the name already exists.\n\n");
     }
@@ -136,7 +135,7 @@ public:
         wprintf(L"Prefix: \"%s\"\n", ctx.m_prefix.c_str());
         wprintf(L"OutputFileName: \"%s\"\n", ctx.m_outputFileName.c_str());
         wprintf(L"Commands:\n");
-        for (auto command : ctx.m_commands)
+        for (auto& command : ctx.m_commands)
         {
             wprintf(L"    CommandType: \"%s\"\n", Utility::to_wstr(command.m_commandType));
             wprintf(L"    Name: \"%s\"\n", command.m_name.c_str());

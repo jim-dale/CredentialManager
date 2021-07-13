@@ -16,7 +16,6 @@ CredentialManager [-?] [-v] [-c] [-l filter] [-r regex] [-p prefix] [-o filename
   -r  List entries with the specified regular expression filter. The filter is appended to the prefix to match entries.
   -o  Set output filename.
   -p  Sets the prefix for the credential. The prefix is combined with the name to produce a unique name.
-      The prefix defaults to the value in the 'CM_NAME_PREFIX' environment variable if this has been set.
   -g  Display the password for the named generic credential.
   -s  Sets the password for the given credential name. Overwrites the existing password if the name already exists.
 ```

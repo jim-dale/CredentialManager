@@ -6,7 +6,7 @@
 #define VERSION(x) "2.2.0-" STRINGIFY(x)
 
 static const wchar_t* ProgramName = _T("CredentialManager");
-static const wchar_t* ProgramVersion = _T(VERSION(BUILDNUM));
+static const wchar_t* ProgramVersion = _T(VERSION(BUILD_SOURCEVERSION));
 
 #if defined(_DEBUG)
 static const wchar_t* ProgramConfig = _T("Debug");

@@ -29,7 +29,6 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '-p:BUILD_BUILDNUMBER=$(Build.SourceVersion)'
 
 - task: VSTest@2
   inputs:
