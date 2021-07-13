@@ -55,7 +55,7 @@ steps:
     replaceExistingArchive: true
 
 - task: PublishPipelineArtifact@1
-  displayName: 'Publish Artifact: drop'
+  displayName: 'Publish Artifact: drop-$(buildPlatform)'
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)\$(Build.BuildNumber)-$(buildConfiguration)-$(buildPlatform).zip'
     artifactType: pipeline
