@@ -2,8 +2,6 @@
 
 enum class AppCommandType
 {
-    GetPassword,
-    AddEntry,
-    ListEntries,
-    RegexListEntries
+    GetPassword
+    , AddEntry
 };

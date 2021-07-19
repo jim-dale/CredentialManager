@@ -3,18 +3,16 @@ Command line utility to manage credentials in the Windows Credential Manager sto
 
 ## Usage
 ```dosbatch
-CredentialManager [-?] [-v] [-c] [-l filter] [-r regex] [-p prefix] [-o filename] [-s name password] [-g Name]
+CredentialManager [-?] [-v] [-c] [-p prefix] [-o filename] [-s name password] [-g Name] [-c[-]]
 
   -?  Display this help information.
   -v  Display version information.
-  -c  Display the runtime configuration.
-  -l  List entries with the specified filter. The filter is appended to the prefix to match entries.
-      The default filter is '*' to list all entries.
-  -r  List entries with the specified regular expression filter. The filter is appended to the prefix to match entries.
-  -o  Set output filename.
+  -c  Display the runtime configuration and exit.
   -p  Sets the prefix for the credential. The prefix is combined with the name to produce a unique name.
-  -g  Display the password for the named generic credential.
+  -o  Set output filename.
   -s  Sets the password for the given credential name. Overwrites the existing password if the name already exists.
+  -g  Display the password for the named generic credential.
+  -e  Use encryption to store the password in the Windows Credential Store. Encryption is enabled by default.
 ```
 
 The overall aim is to automate the creation of encrypted archives for offline storage without embedding passwords in scripts.

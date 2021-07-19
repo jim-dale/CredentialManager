@@ -28,6 +28,11 @@ public:
         return result;
     }
 
+    static std::wstring Concat(const std::wstring& prefix, const std::wstring& name)
+    {
+        return prefix + name;
+    }
+
     static bool ends_with(const std::wstring& value, const std::wstring& ending)
     {
         bool result = false;
@@ -38,6 +43,35 @@ public:
         if (offset <= value_len)
         {
             result = (0 == value.compare(offset, end_len, ending));
+        }
+        return result;
+    }
+
+    static std::wstring ConvertToWString(const std::vector<BYTE>& value)
+    {
+        return ConvertBlobToWString(value.data(), value.size());
+    }
+
+    static std::wstring ConvertBlobToWString(BYTE const* const blob, size_t blobSize)
+    {
+        std::wstring result;
+
+        size_t count = blobSize / sizeof(std::wstring::value_type);
+        if (count > 0)
+        {
+            result.assign((std::wstring::const_pointer)blob, count);
+        }
+        return result;
+    }
+
+    static std::vector<BYTE> ConvertWstring(const std::wstring& value)
+    {
+        std::vector<BYTE> result;
+
+        size_t count = (value.length() * sizeof(std::wstring::value_type));
+        if (count > 0)
+        {
+            result.assign((BYTE*)value.data(), (BYTE*)(value.data() + count));
         }
         return result;
     }
@@ -58,9 +92,6 @@ public:
             break;
         case AppCommandType::AddEntry:
             result = L"AddEntry";
-            break;
-        case AppCommandType::ListEntries:
-            result = L"ListEntries";
             break;
         default:
             break;

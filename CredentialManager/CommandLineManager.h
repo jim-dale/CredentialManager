@@ -9,8 +9,6 @@ private:
         , ExpectGetName
         , ExpectAddEntryName
         , ExpectAddEntryPassword
-        , ExpectListEntriesFilter
-        , ExpectRegexListEntriesFilter
         , ExpectPrefix
         , ExpectOutputFileName
     };
@@ -31,6 +29,7 @@ public:
         std::wstring value;
 
         result.m_showHelp = (argc == 1);
+        result.m_encryptPassword = true;
 
         // Skip the first argument because by convention, argv[0] is the command with which the program is invoked.
         for (size_t i = 1; i < argc; i++)
@@ -58,14 +57,6 @@ public:
                 result.m_commands.push_back(AppCommand::CreateAddEntryCommand(value, arg));
                 state = ParserState::ExpectOption;
                 break;
-            case ParserState::ExpectListEntriesFilter:
-                result.m_commands.push_back(AppCommand::CreateListCommand(arg));
-                state = ParserState::ExpectOption;
-                break;
-            case ParserState::ExpectRegexListEntriesFilter:
-                result.m_commands.push_back(AppCommand::CreateRegexListCommand(arg));
-                state = ParserState::ExpectOption;
-                break;
             case ParserState::ExpectPrefix:
                 result.m_prefix = arg;
                 state = ParserState::ExpectOption;
@@ -78,19 +69,6 @@ public:
                 break;
             }
         }
-        if (state == ParserState::ExpectListEntriesFilter)
-        {   // orphaned list option with no filter parameter specified. Default to '*' == match all entries.
-            result.m_commands.push_back(AppCommand::CreateListCommand(Constants::DefaultFilter));
-            state = ParserState::ExpectOption;
-        }
-        if (state != ParserState::ExpectOption)
-        {
-            if (state == ParserState::ExpectRegexListEntriesFilter)
-            {
-                result.m_showHelp = true;
-                result.m_errorMessage = std::wstring(L"The regular expression must be specified for the -r parameter.");
-            }
-        }
         return result;
     }
 
@@ -100,18 +78,16 @@ public:
 
         wprintf(L"Manages credentials in the Windows Credential Manager store.\n\n");
 
-        wprintf(L"Usage: %s [-?] [-v] [-c] [-l filter] [-r regex] [-p prefix] [-o filename] [-s name password] [-g Name]\n\n", ProgramName);
+        wprintf(L"Usage: %s [-?] [-v] [-c] [-p prefix] [-o filename] [-s name password] [-g Name] [-c[-]]\n\n", ProgramName);
 
         wprintf(L"  -?  Display this help information.\n");
         wprintf(L"  -v  Display version information.\n");
-        wprintf(L"  -c  Display the runtime configuration.\n");
-        wprintf(L"  -l  List entries with the specified filter. The filter is appended to the prefix to match entries.\n");
-        wprintf(L"      The default filter is '*' to list all entries.\n");
-        wprintf(L"  -r  List entries with the specified regular expression filter. The filter is appended to the prefix to match entries.\n");
-        wprintf(L"  -o  Set output filename.\n");
+        wprintf(L"  -c  Display the runtime configuration and exit.\n");
         wprintf(L"  -p  Sets the prefix for the credential. The prefix is combined with the name to produce a unique name.\n");
+        wprintf(L"  -o  Set output filename.\n");
+        wprintf(L"  -s  Sets the password for the given credential name. Overwrites the existing password if the name already exists.\n");
         wprintf(L"  -g  Display the password for the named generic credential.\n");
-        wprintf(L"  -s  Sets the password for the given credential name. Overwrites the existing password if the name already exists.\n\n");
+        wprintf(L"  -e  Use encryption to store the password in the Windows Credential Store. Encryption is enabled by default.\n");
     }
 
     void ShowVersion()
@@ -130,14 +106,14 @@ public:
             shortGitHash = shortGitHash.substr(shortGitHash.length() - SHORTGITHASHLEN);
         }
 
-        wprintf(L"%s %s-%s-%s-%s (%s)\n\n", ProgramName, ProgramVersion, shortGitHash.c_str(), ProgramPlatform, ProgramConfig, gitHash.c_str());
+        wprintf(L"%s %s-%s-%s-%s (%s)\n", ProgramName, ProgramVersion, shortGitHash.c_str(), ProgramPlatform, ProgramConfig, gitHash.c_str());
     }
 
     void ShowIfError(const AppContext& ctx)
     {
         if (false == ctx.m_errorMessage.empty())
         {
-            fwprintf(stderr, L"%s\n\n", ctx.m_errorMessage.c_str());
+            fwprintf(stderr, L"\n%s\n", ctx.m_errorMessage.c_str());
         }
     }
 
@@ -148,6 +124,7 @@ public:
         wprintf(L"ShowConfiguration: %s\n", Utility::to_wstr(ctx.m_showConfiguration));
         wprintf(L"Prefix: \"%s\"\n", ctx.m_prefix.c_str());
         wprintf(L"OutputFileName: \"%s\"\n", ctx.m_outputFileName.c_str());
+        wprintf(L"UseEncryption: %s\n", Utility::to_wstr(ctx.m_encryptPassword));
         wprintf(L"Commands:\n");
         for (auto& command : ctx.m_commands)
         {
@@ -179,14 +156,6 @@ private:
         {
             result = ParserState::ExpectGetName;
         }
-        else if (_wcsicmp(L"l", arg) == 0)
-        {
-            result = ParserState::ExpectListEntriesFilter;
-        }
-        else if (_wcsicmp(L"r", arg) == 0)
-        {
-            result = ParserState::ExpectRegexListEntriesFilter;
-        }
         else if (_wcsicmp(L"o", arg) == 0)
         {
             result = ParserState::ExpectOutputFileName;
@@ -198,6 +167,14 @@ private:
         else if (_wcsicmp(L"s", arg) == 0)
         {
             result = ParserState::ExpectAddEntryName;
+        }
+        else if (_wcsicmp(L"e", arg) == 0)
+        {
+            appContext.m_encryptPassword = true;
+        }
+        else if (_wcsicmp(L"e-", arg) == 0)
+        {
+            appContext.m_encryptPassword = false;
         }
         else
         {

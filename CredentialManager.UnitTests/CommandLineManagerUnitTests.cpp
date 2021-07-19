@@ -46,6 +46,20 @@ namespace CredentialManagerUnitTests
             Assert::IsTrue(ctx.m_showConfiguration);
         }
 
+        TEST_METHOD(EArg_Parsed_SetEncryptionTrue)
+        {
+            auto ctx = CallParse({ FirstArg(), L"-e" });
+
+            Assert::IsTrue(ctx.m_encryptPassword);
+        }
+
+        TEST_METHOD(NegatedEArg_Parsed_SetEncryptionTrue)
+        {
+            auto ctx = CallParse({ FirstArg(), L"-e-" });
+
+            Assert::IsFalse(ctx.m_encryptPassword);
+        }
+
         TEST_METHOD(GArg_Parsed_GetPasswordCommandCreated)
         {
             auto ctx = CallParse({ FirstArg(), L"-g", L"Name" });
@@ -55,40 +69,14 @@ namespace CredentialManagerUnitTests
             Assert::AreEqual(std::wstring(L"Name"), ctx.m_commands[0].m_name);
         }
 
-        TEST_METHOD(LArgAndNothingElse_Parsed_ShowAll)
+        TEST_METHOD(SArg_Parsed_SetPasswordCommandCreated)
         {
-            auto ctx = CallParse({ FirstArg(), L"-l" });
+            auto ctx = CallParse({ FirstArg(), L"-s", L"Name", L"Password"});
 
             Assert::AreEqual<size_t>(1, ctx.m_commands.size());
-            Assert::AreEqual<int>((int)AppCommandType::ListEntries, (int)ctx.m_commands[0].m_commandType);
-            Assert::AreEqual(Constants::DefaultFilter, ctx.m_commands[0].m_name);
-        }
-
-        TEST_METHOD(LArgAndAnythingElse_Parsed_ShowFiltered)
-        {
-            auto ctx = CallParse({ FirstArg(), L"-l", L"filter*" });
-
-            Assert::AreEqual<size_t>(1, ctx.m_commands.size());
-            Assert::AreEqual<int>((int)AppCommandType::ListEntries, (int)ctx.m_commands[0].m_commandType);
-            Assert::AreEqual(std::wstring(L"filter*"), ctx.m_commands[0].m_name);
-        }
-
-        TEST_METHOD(RArgAndNothingElse_Parsed_ShowHelpAndError)
-        {
-            auto ctx = CallParse({ FirstArg(), L"-r" });
-
-            Assert::AreEqual<size_t>(0, ctx.m_commands.size());
-            Assert::IsTrue(ctx.m_showHelp);
-            Assert::IsFalse(ctx.m_errorMessage.empty());
-        }
-
-        TEST_METHOD(RArgAndAnythingElse_Parsed_ShowRegexFiltered)
-        {
-            auto ctx = CallParse({ FirstArg(), L"-r", L"regexfilter.*" });
-
-            Assert::AreEqual<size_t>(1, ctx.m_commands.size());
-            Assert::AreEqual<int>((int)AppCommandType::RegexListEntries, (int)ctx.m_commands[0].m_commandType);
-            Assert::AreEqual(std::wstring(L"regexfilter.*"), ctx.m_commands[0].m_name);
+            Assert::AreEqual<int>((int)AppCommandType::AddEntry, (int)ctx.m_commands[0].m_commandType);
+            Assert::AreEqual(std::wstring(L"Name"), ctx.m_commands[0].m_name);
+            Assert::AreEqual(std::wstring(L"Password"), ctx.m_commands[0].m_password);
         }
 
     private:

@@ -6,32 +6,6 @@ struct AppCommand
     std::wstring    m_name;
     std::wstring    m_password;
 
-    static AppCommand CreateListCommand(const std::wstring& filter)
-    {
-        AppCommand result{};
-
-        result.m_commandType = AppCommandType::ListEntries;
-        if (filter.empty())
-        {
-            result.m_name = Constants::DefaultFilter;
-        }
-        else
-        {
-            result.m_name = filter;
-        }
-        return result;
-    }
-
-    static AppCommand CreateRegexListCommand(const std::wstring& filter)
-    {
-        AppCommand result{};
-
-        result.m_commandType = AppCommandType::RegexListEntries;
-        result.m_name = filter;
-
-        return result;
-    }
-
     static AppCommand CreateGetPasswordCommand(const std::wstring& name)
     {
         AppCommand result{};

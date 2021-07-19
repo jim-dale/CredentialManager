@@ -5,6 +5,7 @@
 
 #include <windows.h>
 #include <wincred.h>
+#include <dpapi.h>
 
 #include <stdio.h>
 #include <tchar.h>
@@ -20,8 +21,10 @@
 #include "Constants.h"
 #include "AppCommandType.h"
 #include "Utility.h"
+#include "CryptoUtility.h"
 #include "AppMetadata.h"
 #include "SimpleGenericCredential.h"
+#include "IWin32CredentialConverter.h"
 #include "Win32CredentialManager.h"
 
 #include "AppCommand.h"

@@ -3,129 +3,79 @@
 class Win32CredentialManager
 {
 public:
-    HRESULT hres;
+	HRESULT hres;
 
-    bool Exists(const std::wstring& name)
-    {
-        bool result = false;
+	Win32CredentialManager(std::shared_ptr<IWin32CredentialConverter> converter)
+		: m_converter(converter), hres(S_OK)
+	{
+	}
 
-        PCREDENTIAL pCredential = nullptr;
-        BOOL success = ::CredRead(name.c_str(), CRED_TYPE_GENERIC, 0, &pCredential);
-        if (FALSE == success)
-        {
-            SetHResult();
-        }
-        else
-        {
-            result = true;
-            ::CredFree(pCredential);
-        }
-        return result;
-    }
+	bool Exists(const std::wstring& name)
+	{
+		bool result = false;
 
-    CredentialCollection GetEntries(const std::wstring& filter)
-    {
-        CredentialCollection result;
+		PCREDENTIAL pCredential = nullptr;
+		BOOL success = ::CredRead(name.c_str(), CRED_TYPE_GENERIC, 0, &pCredential);
+		if (FALSE != success)
+		{
+			result = true;
+			::CredFree(pCredential);
+		}
+		return result;
+	}
 
-        DWORD count = 0;
-        PCREDENTIAL* pCredentials = nullptr;
-        BOOL success = ::CredEnumerate(filter.c_str(), 0, &count, &pCredentials);
-        if (FALSE == success)
-        {
-            SetHResult();
-        }
-        else
-        {
-            for (DWORD i = 0; i < count; i++)
-            {
-                PCREDENTIAL pCredential = pCredentials[i];
+	void AddEntry(const std::wstring& name, const std::wstring& password)
+	{
+		auto item = m_converter->ConvertTo(name, password);
 
-                std::wstring name(pCredential->TargetName);
-                std::wstring password = Win32CredentialManager::ConvertBlobToWString(pCredential);
+		CREDENTIAL credential{};
+		credential.Type = CRED_TYPE_GENERIC;
+		credential.Persist = CRED_PERSIST_LOCAL_MACHINE;
+		credential.TargetName = (LPWSTR)item.m_name.c_str();
+		credential.CredentialBlobSize = (DWORD)item.m_blob.size();
+		credential.CredentialBlob = (PBYTE)item.m_blob.data();
 
-                SimpleGenericCredential item
-                {
-                    name,
-                    password
-                };
+		BOOL success = ::CredWrite(&credential, 0);
+		if (FALSE == success)
+		{
+			SetHResult();
+		}
+	}
 
-                result.push_back(item);
-            }
-            ::CredFree(pCredentials);
-        }
-        return result;
-    }
+	SimpleGenericCredential GetEntry(const std::wstring& name)
+	{
+		SimpleGenericCredential result{};
 
-    CredentialCollection GetAllEntries()
-    {
-        return GetEntries(Constants::DefaultFilter);
-    }
+		PCREDENTIAL pCredential = nullptr;
+		BOOL success = ::CredRead(name.c_str(), CRED_TYPE_GENERIC, 0, &pCredential);
+		if (FALSE == success)
+		{
+			SetHResult();
+		}
+		else
+		{
+			result = m_converter->ConvertFrom(pCredential->TargetName, pCredential->CredentialBlob, pCredential->CredentialBlobSize);
 
-    SimpleGenericCredential GetEntry(const std::wstring& name)
-    {
-        SimpleGenericCredential result{};
+			::CredFree(pCredential);
+		}
+		return result;
+	}
 
-        PCREDENTIAL pCredential = nullptr;
-        BOOL success = ::CredRead(name.c_str(), CRED_TYPE_GENERIC, 0, &pCredential);
-        if (FALSE == success)
-        {
-            SetHResult();
-        }
-        else
-        {
-            result.m_name = name;
-            result.m_password = ConvertBlobToWString(pCredential);
-
-            ::CredFree(pCredential);
-        }
-        return result;
-    }
-
-    void AddEntry(const std::wstring& name, const std::wstring& password)
-    {
-        size_t size = (password.length() * sizeof(std::wstring::value_type));
-
-        CREDENTIAL credential{};
-        credential.Type = CRED_TYPE_GENERIC;
-        credential.TargetName = (LPWSTR)name.c_str();
-        credential.CredentialBlobSize = (DWORD)size;
-        credential.CredentialBlob = (LPBYTE)password.c_str();
-        credential.Persist = CRED_PERSIST_ENTERPRISE;
-
-        BOOL success = ::CredWrite(&credential, 0);
-        if (FALSE == success)
-        {
-            SetHResult();
-        }
-    }
-
-    void DeleteEntry(const std::wstring& name)
-    {
-        BOOL success = ::CredDelete(name.c_str(), CRED_TYPE_GENERIC, 0);
-        if (FALSE == success)
-        {
-            SetHResult();
-        }
-    }
-
-    static std::wstring BuildFullTargetName(const std::wstring& prefix, const std::wstring& name)
-    {
-        return prefix + name;
-    }
-
-    static std::wstring ConvertBlobToWString(PCREDENTIAL pCredential)
-    {
-        size_t count = pCredential->CredentialBlobSize / sizeof(std::wstring::value_type);
-
-        std::wstring result((std::wstring::const_pointer)pCredential->CredentialBlob, count);
-
-        return result;
-    }
+	void DeleteEntry(const std::wstring& name)
+	{
+		BOOL success = ::CredDelete(name.c_str(), CRED_TYPE_GENERIC, 0);
+		if (FALSE == success)
+		{
+			SetHResult();
+		}
+	}
 
 private:
-    void SetHResult()
-    {
-        DWORD err = ::GetLastError();
-        hres = HRESULT_FROM_WIN32(err);
-    }
+	std::shared_ptr<IWin32CredentialConverter> m_converter;
+
+	void SetHResult()
+	{
+		DWORD err = ::GetLastError();
+		hres = HRESULT_FROM_WIN32(err);
+	}
 };
