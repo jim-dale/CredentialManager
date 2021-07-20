@@ -78,7 +78,7 @@ public:
 
         wprintf(L"Manages credentials in the Windows Credential Manager store.\n\n");
 
-        wprintf(L"Usage: %s [-?] [-v] [-c] [-p prefix] [-o filename] [-s name password] [-g Name] [-c[-]]\n\n", ProgramName);
+        wprintf(L"Usage: %s [-?] [-v] [-c] [-p prefix] [-o filename] [-s name password] [-g Name] [-e[-]]\n\n", ProgramName);
 
         wprintf(L"  -?  Display this help information.\n");
         wprintf(L"  -v  Display version information.\n");
@@ -87,7 +87,8 @@ public:
         wprintf(L"  -o  Set output filename.\n");
         wprintf(L"  -s  Sets the password for the given credential name. Overwrites the existing password if the name already exists.\n");
         wprintf(L"  -g  Display the password for the named generic credential.\n");
-        wprintf(L"  -e  Use encryption to store the password in the Windows Credential Store. Encryption is enabled by default.\n");
+        wprintf(L"  -e  Use encryption to store the password in the Windows Credential Store.\n");
+        wprintf(L"      Encryption is enabled by default. Use '-e-' to store passwords in plain text.\n");
     }
 
     void ShowVersion()
