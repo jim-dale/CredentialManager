@@ -3,7 +3,7 @@
 struct SimpleGenericCredential
 {
     std::wstring m_name;
-    std::vector<BYTE> m_blob;
+    blob m_blob;
     std::wstring m_password;
 
     bool Empty()

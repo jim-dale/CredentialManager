@@ -21,10 +21,8 @@ public:
 	{
 		SimpleGenericCredential result{};
 
-		size_t pwSize = (password.length() * sizeof(std::wstring::value_type));
-
 		result.m_name = name;
-		result.m_blob.assign((BYTE*)password.data(), (BYTE*)(password.data() + pwSize));
+		result.m_blob = Utility::ConvertWstringToBlob(password);
 		result.m_password = password;
 
 		return result;
@@ -38,7 +36,7 @@ public:
 		result.m_blob.assign(blob, blob + blobSize);
 		if (result.m_blob.empty() == false)
 		{
-			result.m_password = Utility::ConvertToWString(result.m_blob);
+			result.m_password = Utility::ConvertBlobToWString(result.m_blob);
 		}
 		return result;
 	}
@@ -52,7 +50,7 @@ public:
 		SimpleGenericCredential result{};
 
 		result.m_name = name;
-		result.m_blob = CryptoUtility::EncryptToWstring(password);
+		result.m_blob = CryptoUtility::EncrypWstringToBlob(password);
 		result.m_password = password;
 
 		return result;
@@ -66,7 +64,7 @@ public:
 		result.m_blob.assign(blob, blob + blobSize);
 		if (result.m_blob.empty() == false)
 		{
-			result.m_password = CryptoUtility::DecryptAsWString(result.m_blob);
+			result.m_password = CryptoUtility::DecryptBlobToWString(result.m_blob);
 		}
 		return result;
 	}

@@ -8,7 +8,7 @@
 static const wchar_t* Check_SourceVersion = _T(STRINGIFY(-CHECK_SOURCEVERSION-));
 
 static const wchar_t* ProgramName = _T("CredentialManager");
-static const wchar_t* ProgramVersion = _T("3.0.0");
+static const wchar_t* ProgramVersion = _T("3.1.0");
 static const wchar_t* GitHash = _T(STRINGIFY(BUILD_SOURCEVERSION-CHECK_SOURCEVERSION-));
 
 #if defined(_DEBUG)

@@ -47,31 +47,23 @@ public:
         return result;
     }
 
-    static std::wstring ConvertToWString(const std::vector<BYTE>& value)
+    static blob ConvertWstringToBlob(const std::wstring value)
     {
-        return ConvertBlobToWString(value.data(), value.size());
-    }
+        blob result;
 
-    static std::wstring ConvertBlobToWString(BYTE const* const blob, size_t blobSize)
-    {
-        std::wstring result;
+        result.assign((blob::pointer)value.data(), (blob::pointer)(value.data() + value.length()));
 
-        size_t count = blobSize / sizeof(std::wstring::value_type);
-        if (count > 0)
-        {
-            result.assign((std::wstring::const_pointer)blob, count);
-        }
         return result;
     }
 
-    static std::vector<BYTE> ConvertWstring(const std::wstring& value)
+    static std::wstring ConvertBlobToWString(const blob& value)
     {
-        std::vector<BYTE> result;
+        std::wstring result;
 
-        size_t count = (value.length() * sizeof(std::wstring::value_type));
+        size_t count = value.size() / sizeof(std::wstring::value_type);
         if (count > 0)
         {
-            result.assign((BYTE*)value.data(), (BYTE*)(value.data() + count));
+            result.assign((std::wstring::const_pointer)value.data(), count);
         }
         return result;
     }

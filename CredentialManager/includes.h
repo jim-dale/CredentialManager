@@ -18,6 +18,8 @@
 #include <string>
 #include <vector>
 
+using blob = std::vector<BYTE>;
+
 #include "Constants.h"
 #include "AppCommandType.h"
 #include "Utility.h"

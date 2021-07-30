@@ -3,9 +3,9 @@
 class CryptoUtility
 {
 public:
-	static std::vector<BYTE> EncryptToWstring(const std::wstring& value)
+	static blob EncrypWstringToBlob(const std::wstring& value)
 	{
-		std::vector<BYTE> result;
+		blob result;
 
 		DATA_BLOB dataIn{};
 		dataIn.pbData = (LPBYTE)value.data();
@@ -21,7 +21,7 @@ public:
 		return result;
 	}
 
-	static std::wstring DecryptAsWString(const std::vector<BYTE>& value)
+	static std::wstring DecryptBlobToWString(const blob& value)
 	{
 		std::wstring result;
 
